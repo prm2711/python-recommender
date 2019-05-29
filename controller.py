@@ -18,12 +18,9 @@ class Recommendations(Resource):
         for element in df1['placeId']:
             list_of_places.append(element)
         response = recommend_places(list_of_places, df)
-        if(len(response) > 0):
-            out = response.to_json(orient='records')
-            jsonResponse = json.loads(out)
-            return jsonResponse
-        else:
-            return []
+        out = response.to_json(orient='records')
+        jsonResponse = json.loads(out)
+        return jsonResponse
 
 api.add_resource(Recommendations, '/recommendations')
 

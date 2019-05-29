@@ -9,6 +9,7 @@ def recommend_places(placesList, placesData):
     category_column = 'Cuisines'
     id_column = 'Restaurant ID'
 
+    originalData = placesData.copy()
     features = [category_column]
     C = placesData[rating_column].mean()
     m = placesData[votes_column].quantile(0.60)
@@ -37,10 +38,10 @@ def recommend_places(placesList, placesData):
         return ' '.join(x[category_column])
 
     def get_recommendations(title, cosine_sim):
-        # Get the index of the place that matches the title
+        # Get the index of the place that matches the ID
         idx = indices[title]
 
-        # Get the pairwsie similarity scores of all places with that place
+        # Get the pairwise similarity scores of all places with that place
         sim_scores = list(enumerate(cosine_sim[idx]))
 
         # Sort the places based on the similarity scores
@@ -100,10 +101,12 @@ def recommend_places(placesList, placesData):
 
         final_returned_list = pd.concat([filtered_list, places_returned_list])
         final_returned_list = final_returned_list.drop(['index','soup'], axis = 1)
-        # print(final_returned_list)
+        final_returned_list[category_column] = originalData[category_column]
         return final_returned_list
     else:
-        return []
+        placesData = placesData.drop(['index','soup'], axis = 1)
+        placesData[category_column] = originalData[category_column]
+        return placesData
 
 # list_of_places = [18384227, 611]
 # df = pd.read_csv('./zomato.csv', low_memory=False)
