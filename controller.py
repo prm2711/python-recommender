@@ -12,15 +12,16 @@ class Recommendations(Resource):
         list_of_places = []
         data = request.json['places']
         df = pd.DataFrame.from_dict(data, orient='columns')
-        placesUser = request.json['user_places']
+        placesUser = request.json['userPlaces']
         df1 = pd.DataFrame.from_dict(placesUser, orient='columns')
         
-        for element in df1['placeId']:
+        for element in df1['placeID']:
             list_of_places.append(element)
+
         response = recommend_places(list_of_places, df)
         out = response.to_json(orient='records')
         jsonResponse = json.loads(out)
-        return jsonResponse
+        return jsonResponse 
 
 api.add_resource(Recommendations, '/recommendations')
 

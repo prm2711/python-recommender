@@ -3,11 +3,11 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 def recommend_places(placesList, placesData):
-    rating_column = 'Aggregate rating'
-    votes_column = 'Votes'
-    place_name_column = 'Restaurant Name'
-    category_column = 'Cuisines'
-    id_column = 'Restaurant ID'
+    rating_column = 'rating'
+    votes_column = 'votes'
+    place_name_column = 'restaurantName'
+    category_column = 'cuisines'
+    id_column = 'restaurantID'
 
     originalData = placesData.copy()
     features = [category_column]
@@ -85,30 +85,31 @@ def recommend_places(placesList, placesData):
 
         #Filtering by score
         filtered_list = final_list.copy().loc[final_list[votes_column] >= m]
-        filtered_list['score'] = filtered_list.apply(weighted_rating, axis=1)
-        filtered_list = filtered_list.sort_values('score', ascending=False)
-        filtered_list = filtered_list.drop(['score'], axis = 1)
+        if(len(filtered_list) > 0):
+            filtered_list['score'] = filtered_list.apply(weighted_rating, axis=1)
+            filtered_list = filtered_list.sort_values('score', ascending=False)
+            filtered_list = filtered_list.drop(['score'], axis = 1)
 
-        indices = []
-        for element in filtered_list['index']:
-            indices.append(element)
+            indices = []
+            for element in filtered_list['index']:
+                indices.append(element)
     
-        remaining_indices = []
-        for element in placesData['index']:
-            if element not in indices:
-                remaining_indices.append(element)
-        places_returned_list = placesData.iloc[remaining_indices]
+            remaining_indices = []
+            for element in placesData['index']:
+                if element not in indices:
+                    remaining_indices.append(element)
+            places_returned_list = placesData.iloc[remaining_indices]
 
-        final_returned_list = pd.concat([filtered_list, places_returned_list])
-        final_returned_list = final_returned_list.drop(['index','soup'], axis = 1)
-        final_returned_list[category_column] = originalData[category_column]
-        return final_returned_list
+            final_returned_list = pd.concat([filtered_list, places_returned_list])
+            final_returned_list = final_returned_list.drop(['index','soup'], axis = 1)
+            final_returned_list[category_column] = originalData[category_column]
+            return final_returned_list
+        else:
+            final_list = final_list.drop(['index','soup'], axis = 1)
+            final_list[category_column] = originalData[category_column]
+            return final_list
     else:
         placesData = placesData.drop(['index','soup'], axis = 1)
         placesData[category_column] = originalData[category_column]
         return placesData
 
-# list_of_places = [18384227, 611]
-# df = pd.read_csv('./zomato.csv', low_memory=False)
-# print(df)
-# recommend_places(list_of_places, placesData)
