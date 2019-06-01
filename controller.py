@@ -26,4 +26,4 @@ class Recommendations(Resource):
 api.add_resource(Recommendations, '/recommendations')
 
 if __name__ == '__main__':
-     app.run(port='5002')
+     app.run(host='192.168.100.155',port='5002')
