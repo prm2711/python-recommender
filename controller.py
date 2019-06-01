@@ -15,7 +15,7 @@ class Recommendations(Resource):
         placesUser = request.json['userPlaces']
         df1 = pd.DataFrame.from_dict(placesUser, orient='columns')
         
-        for element in df1['placeID']:
+        for element in df1['restaurantID']:
             list_of_places.append(element)
 
         response = recommend_places(list_of_places, df)
